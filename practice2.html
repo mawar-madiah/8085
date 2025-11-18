@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>8085 Addressing Modes Quiz</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h2 { margin-bottom: 20px; }
+    #questionBox { font-size: 20px; margin-bottom: 15px; }
+    .option { margin: 8px 0; font-size: 18px; }
+    #result { margin-top: 15px; font-size: 22px; font-weight: bold; }
+    #score { margin-top: 20px; font-size: 18px; font-weight: bold; }
+    button { padding: 8px 16px; margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<h2>8085 Addressing Modes – Interactive Quiz</h2>
+
+<p id="questionBox"></p>
+
+<form id="optionsForm"></form>
+
+<button id="checkBtn" onclick="checkAnswer()" disabled>Check</button>
+<button onclick="nextQuestion()">Next Question</button>
+
+<p id="result"></p>
+<p id="score"></p>
+
+<script>
+// Questions and options
+const quiz = [
+    { q: "1. Addressing mode of MVI A, 10H?", 
+      options: ["Register", "Immediate", "Direct", "Register-indirect"], 
+      correct: 1 },
+
+    { q: "2. Addressing mode of MVI B, 4FH?", 
+      options: ["Immediate", "Direct", "Register", "Implied"], 
+      correct: 0 },
+
+    { q: "3. Addressing mode of MVI E, FFH?", 
+      options: ["Register", "Register-indirect", "Immediate", "Direct"], 
+      correct: 2 },
+
+    { q: "4. Addressing mode of MOV C, B?", 
+      options: ["Immediate", "Direct", "Register", "Indirect"], 
+      correct: 2 },
+
+    { q: "5. Addressing mode of MOV D, C?", 
+      options: ["Register", "Direct", "Immediate", "Implied"], 
+      correct: 0 },
+
+    { q: "6. Addressing mode of LXI H, 2050H?", 
+      options: ["Immediate (16-bit)", "Register", "Direct", "Register-indirect"], 
+      correct: 0 },
+
+    { q: "7. Addressing mode of LXI B, 9080H?", 
+      options: ["Register-indirect", "Immediate (16-bit)", "Register", "Direct"], 
+      correct: 1 },
+
+    { q: "8. Addressing mode of XCHG?", 
+      options: ["Immediate", "Register-indirect", "Direct", "Implied"], 
+      correct: 3 },
+
+    { q: "9. Addressing mode of MVI M, 67H?", 
+      options: ["Direct", "Register", "Register-indirect with immediate", "Immediate only"], 
+      correct: 2 },
+
+    { q: "10. Addressing mode of MOV M, B?", 
+      options: ["Register", "Register-indirect", "Direct", "Immediate"], 
+      correct: 1 },
+
+    { q: "11. Addressing mode of MOV D, M?", 
+      options: ["Register", "Register-indirect", "Immediate", "Direct"], 
+      correct: 1 },
+
+    { q: "12. Addressing mode of STA 3050H?", 
+      options: ["Immediate", "Direct", "Implied", "Register-indirect"], 
+      correct: 1 },
+
+    { q: "13. Addressing mode of STAX B?", 
+      options: ["Register-indirect (BC)", "Direct", "Register", "Immediate"], 
+      correct: 0 },
+
+    { q: "14. Addressing mode of SHLD 2060H?", 
+      options: ["Register", "Immediate", "Direct (16-bit)", "Register-indirect"], 
+      correct: 2 },
+
+    { q: "15. Addressing mode of LHLD 3050H?", 
+      options: ["Immediate", "Register", "Register-indirect", "Direct (16-bit)"], 
+      correct: 3 }
+];
+
+let index = 0;
+let score = 0;
+
+// Load a question
+function loadQuestion() {
+    document.getElementById("result").innerHTML = "";
+
+    let q = quiz[index];
+    document.getElementById("questionBox").innerHTML = q.q;
+
+    let formHTML = "";
+    for (let i = 0; i < q.options.length; i++) {
+        formHTML += `
+            <div class="option">
+                <input type="radio" name="opt" value="${i}" onclick="enableCheck()">
+                ${q.options[i]}
+            </div>`;
+    }
+    document.getElementById("optionsForm").innerHTML = formHTML;
+
+    document.getElementById("checkBtn").disabled = true;
+}
+
+// Enable check button only when an option is selected
+function enableCheck() {
+    document.getElementById("checkBtn").disabled = false;
+}
+
+// Check answer
+function checkAnswer() {
+    let selected = document.querySelector('input[name="opt"]:checked');
+    if (!selected) return;
+
+    let ans = parseInt(selected.value);
+
+    if (ans === quiz[index].correct) {
+        document.getElementById("result").innerHTML = "✅ Correct!";
+        document.getElementById("result").style.color = "green";
+        score++;
+    } else {
+        document.getElementById("result").innerHTML = "❌ Wrong!";
+        document.getElementById("result").style.color = "red";
+    }
+
+    document.getElementById("score").innerHTML = `Score: ${score} / ${quiz.length}`;
+}
+
+// Next Question
+function nextQuestion() {
+    index++;
+    if (index >= quiz.length) {
+        index = 0;
+        score = 0;
+        document.getElementById("score").innerHTML = "";
+    }
+    loadQuestion();
+}
+
+// Load first question
+loadQuestion();
+</script>
+
+</body>
+</html>
