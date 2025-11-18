@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>8085 Instruction Practice</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #questionBox { font-size: 20px; margin-bottom: 15px; }
+    #studentAnswer { width: 350px; font-size: 16px; padding: 5px; }
+    button { margin-right: 10px; padding: 6px 12px; font-size: 16px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #result { margin-top: 10px; font-size: 20px; font-weight: bold; }
+    #answerBox { margin-top: 10px; font-size: 18px; color: blue; font-weight: bold; }
+    #progressContainer { width: 100%; background-color: #ddd; margin-top: 15px; height: 25px; border-radius: 5px; }
+    #progressBar { width: 0%; height: 100%; background-color: #4CAF50; border-radius: 5px; text-align: center; color: white; line-height: 25px; }
+</style>
+</head>
+<body>
+
+<h2>8085 Instruction Practice</h2>
+
+<div id="progressContainer">
+    <div id="progressBar">0%</div>
+</div>
+
+<p id="questionBox"></p>
+
+<input type="text" id="studentAnswer" placeholder="Type your instruction here" oninput="enableButtons()">
+<button id="checkBtn" onclick="checkAnswer()" disabled>Check</button>
+<button id="showBtn" onclick="showAnswer()" disabled>Show Answer</button>
+<button id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+
+<p id="result"></p>
+<p id="answerBox"></p>
+
+<script>
+// Questions and answers
+let quiz = [
+    {q:"Load the value 10H into register A (Accumulator).", a:"MVI A, 10H"},
+    {q:"Load the value 4FH into register B.", a:"MVI B, 4FH"},
+    {q:"Store the value FF into register E.", a:"MVI E, FFH"},
+    {q:"Copy the contents of register B to register C.", a:"MOV C, B"},
+    {q:"Move the contents of register C to register D.", a:"MOV D, C"},
+    {q:"Load the value 2050H into register pair HL.", a:"LXI H, 2050H"},
+    {q:"Store the value 9080H into register BC.", a:"LXI B, 9080H"},
+    {q:"Exchange the contents of the HL register pair with the DE register pair.", a:"XCHG"},
+    {q:"Store the value 67H to the memory location pointed to by the HL register pair.", a:"MVI M, 67H"},
+    {q:"Move the contents of register B to the memory location pointed to by the HL register pair.", a:"MOV M, B"},
+    {q:"Move the data from the memory location pointed to by the HL register pair to register D.", a:"MOV D, M"},
+    {q:"Store the contents of register A into memory address 3050H.", a:"STA 3050H"},
+    {q:"Copy the contents of register A to the memory location pointed to by the BC register pair.", a:"STAX B"},
+    {q:"Store the contents of the HL register pair into memory starting at address 2060H.", a:"SHLD 2060H"},
+    {q:"Load the HL register pair with the contents of memory starting at address 3050H.", a:"LHLD 3050H"},
+    {q:"Read (input) data from port 02H.", a:"IN 02H"},
+    {q:"Output the data from the accumulator to port 05H.", a:"OUT 05H"}
+];
+
+// Shuffle questions
+quiz = quiz.sort(() => Math.random() - 0.5);
+
+let index = 0;
+let score = 0;
+
+function loadQuestion() {
+    document.getElementById("studentAnswer").value = "";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("answerBox").innerHTML = "";
+    document.getElementById("checkBtn").disabled = true;
+    document.getElementById("showBtn").disabled = true;
+    document.getElementById("nextBtn").disabled = true;
+
+    if(index < quiz.length){
+        document.getElementById("questionBox").innerHTML = (index+1) + ". " + quiz[index].q;
+        updateProgress();
+    } else {
+        showFinalResult();
+    }
+}
+
+function enableButtons() {
+    let val = document.getElementById("studentAnswer").value.trim();
+    document.getElementById("checkBtn").disabled = (val === "");
+    document.getElementById("showBtn").disabled = (val === "");
+}
+
+function checkAnswer() {
+    let studentRaw = document.getElementById("studentAnswer").value.trim().toUpperCase().replace(/\s+/g," ");
+    let correct = quiz[index].a.toUpperCase().replace(/\s+/g," ");
+    if(studentRaw === correct){
+        document.getElementById("result").innerHTML = "✅ Correct!";
+        document.getElementById("result").style.color = "green";
+        score++;
+    } else {
+        document.getElementById("result").innerHTML = "❌ Wrong!";
+        document.getElementById("result").style.color = "red";
+    }
+    document.getElementById("nextBtn").disabled = false; // enable next
+}
+
+function showAnswer() {
+    document.getElementById("answerBox").innerHTML = "✔ Correct Answer: " + quiz[index].a;
+    document.getElementById("nextBtn").disabled = false; // allow next
+}
+
+function nextQuestion() {
+    index++;
+    loadQuestion();
+}
+
+function updateProgress(){
+    let percent = Math.round((index/quiz.length)*100);
+    document.getElementById("progressBar").style.width = percent+"%";
+    document.getElementById("progressBar").innerHTML = percent+"%";
+}
+
+function showFinalResult(){
+    document.getElementById("questionBox").innerHTML = "🎉 Quiz Completed!";
+    document.getElementById("studentAnswer").style.display = "none";
+    document.getElementById("checkBtn").style.display = "none";
+    document.getElementById("showBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("result").innerHTML = "Your Score: "+score+" / "+quiz.length;
+    document.getElementById("answerBox").innerHTML = "";
+    document.getElementById("progressBar").style.width = "100%";
+    document.getElementById("progressBar").innerHTML = "100%";
+}
+
+// Initial load
+loadQuestion();
+</script>
+
+</body>
+</html>
